@@ -1,0 +1,404 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Reports
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2>Reports</h2>
+
+    </div>
+
+
+    <!-- Monthly Recap -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <h5 class="mb-0">
+                Monthly Recap
+            </h5>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                <form method="GET" action="{{ url_for('reports.reports_page') }}" class="d-flex align-items-center gap-2">
+
+                    <input
+                        type="month"
+                        name="month"
+                        class="form-control"
+                        value="{{ selected_month }}"
+                        required>
+
+                    <button type="submit" class="btn btn-primary">
+                        View
+                    </button>
+
+                </form>
+
+                <a
+                    href="{{ url_for('reports.export_monthly_csv', month=selected_month) }}"
+                    class="btn btn-outline-success">
+                    Export CSV
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert {% if recap_window_open %}alert-success{% else %}alert-info{% endif %}">
+                {{ recap_hint }}
+            </div>
+
+            <h4 class="mb-3">
+                {{ monthly_recap.month_label }}
+            </h4>
+
+            <div class="row g-3 mb-3">
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 h-100">
+                        <div class="text-muted">Total Scanned</div>
+                        <h4 class="mb-0">{{ monthly_recap.total_documents }}</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 h-100">
+                        <div class="text-muted">Total Amount Spent</div>
+                        <h4 class="mb-0">₹{{ "%.2f"|format(monthly_recap.total_amount) }}</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 h-100">
+                        <div class="text-muted">Docs With Amount</div>
+                        <h4 class="mb-0">{{ monthly_recap.documents_with_amount }}</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 h-100">
+                        <div class="text-muted">Linked To Patients</div>
+                        <h4 class="mb-0">{{ monthly_recap.linked_to_patient }}</h4>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-lg-4">
+
+                    <h6 class="mb-2">Category Breakdown</h6>
+
+                    {% if monthly_recap.category_stats %}
+
+                        <ul class="list-group">
+
+                            {% for stat in monthly_recap.category_stats %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ stat.category_name }}</span>
+                                <span class="badge text-bg-primary rounded-pill">{{ stat.count }}</span>
+                            </li>
+                            {% endfor %}
+
+                        </ul>
+
+                    {% else %}
+
+                        <div class="alert alert-light border mb-0">
+                            No category data available for this month.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="col-lg-8">
+
+                    <h6 class="mb-2">Scanned Items In Month</h6>
+
+                    {% if monthly_recap.items %}
+
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Uploaded</th>
+                                        <th>Extracted Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in monthly_recap.items %}
+                                    <tr>
+                                        <td>{{ item.document.document_id }}</td>
+                                        <td>{{ item.document.title }}</td>
+                                        <td>{{ item.document.category.category_name }}</td>
+                                        <td>{{ item.document.upload_date }}</td>
+                                        <td>
+                                            {% if item.amount is not none %}
+                                                ₹{{ "%.2f"|format(item.amount) }}
+                                            {% else %}
+                                                <span class="text-muted">Not detected</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    {% else %}
+
+                        <div class="alert alert-light border mb-0">
+                            No documents found in this month.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Statistics -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- Documents -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Total Documents
+                            </h6>
+
+                            <h2>
+                                {{ total_documents }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-file-earmark-text"
+                                style="font-size: 40px;">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Patients -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Total Patients
+                            </h6>
+
+                            <h2>
+                                {{ total_patients }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-people"
+                                style="font-size: 40px;">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Categories -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Categories
+                            </h6>
+
+                            <h2>
+                                {{ total_categories }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-folder"
+                                style="font-size: 40px;">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent Documents -->
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                Recent Documents
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if recent_documents %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Uploaded</th>
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for document in recent_documents %}
+
+                            <tr>
+
+                                <td>
+                                    {{ document.document_id }}
+                                </td>
+
+                                <td>
+                                    {{ document.title }}
+                                </td>
+
+                                <td>
+                                    {{ document.file_type|upper }}
+                                </td>
+
+                                <td>
+                                    {{ document.upload_date }}
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="{{ url_for(
+                                            'documents.view_document',
+                                            document_id=document.document_id
+                                        ) }}"
+                                        class="btn btn-success btn-sm">
+
+                                        <i class="bi bi-eye"></i>
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+
+                    No documents have been uploaded yet.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

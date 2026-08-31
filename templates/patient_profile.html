@@ -1,0 +1,109 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+
+Patient Profile
+
+{% endblock %}
+
+{% block content %}
+
+<h2>{{ patient.patient_name }}</h2>
+
+<hr>
+
+<table class="table table-bordered">
+
+<tr>
+
+<th>Age</th>
+
+<td>{{ patient.age }}</td>
+
+</tr>
+
+<tr>
+
+<th>Gender</th>
+
+<td>{{ patient.gender }}</td>
+
+</tr>
+
+<tr>
+
+<th>Phone</th>
+
+<td>{{ patient.phone }}</td>
+
+</tr>
+
+<tr>
+
+<th>Address</th>
+
+<td>{{ patient.address }}</td>
+
+</tr>
+
+<tr>
+
+<th>Notes</th>
+
+<td>{{ patient.notes }}</td>
+
+</tr>
+
+</table>
+
+<h4 class="mt-4">
+
+Documents
+
+</h4>
+
+{% if patient.documents %}
+
+<table class="table table-striped">
+
+<thead>
+
+<tr>
+
+<th>Title</th>
+
+<th>Category</th>
+
+<th>Date</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for doc in patient.documents %}
+
+<tr>
+
+<td>{{ doc.title }}</td>
+
+<td>{{ doc.category.category_name }}</td>
+
+<td>{{ doc.upload_date }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% else %}
+
+<p>No documents uploaded yet.</p>
+
+{% endif %}
+
+{% endblock %}

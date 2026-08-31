@@ -1,0 +1,231 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+View Document
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="row">
+
+        <!-- Left Side -->
+        <div class="col-lg-5">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h4 class="mb-0">
+                        {{ document.title }}
+                    </h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+                        <strong>Category:</strong>
+                        {{ document.category.category_name }}
+                    </p>
+
+                    <p>
+                        <strong>Uploaded:</strong>
+                        {{ document.upload_date }}
+                    </p>
+
+                    <p>
+                        <strong>File Type:</strong>
+                        {{ document.file_type|upper }}
+                    </p>
+
+                    <p>
+                        <strong>Size:</strong>
+                        {{ (document.file_size/1024)|round(2) }} KB
+                    </p>
+
+                    <p>
+                        <strong>Remarks:</strong><br>
+                        {{ document.remarks or "No remarks" }}
+                    </p>
+
+                    <hr>
+
+                    {% if document.file_type in ["jpg","jpeg","png"] %}
+
+                        <img
+                            src="{{ url_for('uploaded_file', filename=document.file_path) }}"
+                            class="img-fluid rounded border"
+                        >
+
+                    {% else %}
+
+                        <iframe
+                            src="{{ url_for('uploaded_file', filename=document.file_path) }}"
+                            width="100%"
+                            height="700">
+                        </iframe>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right Side -->
+<div class="col-lg-7">
+
+
+            <!-- ================================================= -->
+            <!-- DOCUMENT SUMMARY -->
+            <!-- ================================================= -->
+
+            <div class="card shadow mb-4">
+
+                <div class="card-header bg-warning">
+
+                    <h4 class="mb-0">
+
+                        <i class="bi bi-stars"></i>
+
+                        Document Summary
+
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="row g-3">
+
+
+                        <!-- DATE -->
+
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted mb-1">
+
+                                    <i class="bi bi-calendar-event"></i>
+
+                                    Date
+
+                                </div>
+
+                                <h4 class="mb-0">
+
+                                    {% if summary.date %}
+
+                                        {{ summary.date }}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            Not detected
+                                        </span>
+
+                                    {% endif %}
+
+                                </h4>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted mb-1">
+
+                                    <i class="bi bi-currency-rupee"></i>
+
+                                    Price / MRP
+
+                                </div>
+
+                                <h4 class="mb-0">
+
+                                    {% if summary.price %}
+
+                                        {{ summary.price }}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            Not detected
+                                        </span>
+
+                                    {% endif %}
+
+                                </h4>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- OCR EXTRACTED TEXT -->
+            <!-- ================================================= -->
+
+            <div class="card shadow">
+
+                <div class="card-header bg-success text-white">
+
+                    <h4 class="mb-0">
+
+                        OCR Extracted Text
+
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if document.ocr_text %}
+
+                        <textarea
+                            class="form-control"
+                            rows="30"
+                            readonly>{{ document.ocr_text }}</textarea>
+
+                    {% else %}
+
+                        <div class="alert alert-warning">
+
+                            No OCR text available.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Patients
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-4">
+
+    <h2>Patients</h2>
+
+    <a
+        href="{{ url_for('patients.add_patient') }}"
+        class="btn btn-primary">
+
+        Add Patient
+
+    </a>
+
+</div>
+
+<table class="table table-bordered table-hover">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Age</th>
+
+<th>Gender</th>
+
+<th>Phone</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for patient in patients %}
+
+<tr>
+
+<td>{{ patient.patient_id }}</td>
+
+<td>{{ patient.patient_name }}</td>
+
+<td>{{ patient.age }}</td>
+
+<td>{{ patient.gender }}</td>
+
+<td>{{ patient.phone }}</td>
+
+<td>
+
+<a
+href="{{ url_for('patients.view_patient', patient_id=patient.patient_id) }}"
+class="btn btn-success btn-sm">
+
+View
+
+</a>
+
+<a
+href="{{ url_for('patients.edit_patient', patient_id=patient.patient_id) }}"
+class="btn btn-warning btn-sm">
+
+Edit
+
+</a>
+
+<a
+href="{{ url_for('patients.delete_patient', patient_id=patient.patient_id) }}"
+class="btn btn-danger btn-sm"
+onclick="return confirm('Delete this patient?')">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

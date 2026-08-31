@@ -1,0 +1,234 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Upload Document
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Upload Document
+            </h2>
+
+            <p class="text-muted mb-0">
+                Scan or upload a document and save it to DocTrack OCR.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert alert-{{ category }} alert-dismissible fade show">
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+    <div class="card shadow">
+
+        <div class="card-header text-white"
+             style="background:#a22224;">
+
+            <h5 class="mb-0">
+
+                Upload Details
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                <!-- Title -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Document Title
+
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="title"
+                        placeholder="Example: Blood Test Report"
+                        required>
+
+                </div>
+
+                <!-- Patient -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Patient (Optional)
+
+                    </label>
+
+                    <select
+                        class="form-select"
+                        name="patient_id">
+
+                        <option value="">
+
+                            Select Patient
+
+                        </option>
+
+                        {% for patient in patients %}
+
+                        <option value="{{ patient.patient_id }}">
+
+                            {{ patient.patient_name }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <!-- Category -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Category
+
+                    </label>
+
+                    <select
+                        class="form-select"
+                        name="category_id"
+                        required>
+
+                        <option value="">
+
+                            Select Category
+
+                        </option>
+
+                        {% for category in categories %}
+
+                        <option value="{{ category.category_id }}">
+
+                            {{ category.category_name }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <!-- Notes -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Notes
+
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        rows="4"
+                        name="notes"
+                        placeholder="Enter additional notes..."></textarea>
+
+                </div>
+
+                <!-- Upload -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+
+                        Choose Document
+
+                    </label>
+
+                    <input
+                        type="file"
+                        class="form-control"
+                        name="document"
+                        accept="image/*,.pdf"
+                        capture="environment"
+                        required>
+
+                    <small class="text-muted">
+
+                        On a phone, this usually opens the rear camera.
+                        You can also upload an existing image or PDF.
+
+                    </small>
+
+                </div>
+
+                <!-- Buttons -->
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Upload Document
+
+                    </button>
+
+                    <a
+                        href="{{ url_for('dashboard.home') }}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

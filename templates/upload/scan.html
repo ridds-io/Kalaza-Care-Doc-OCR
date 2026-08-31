@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Scan Document
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header text-center">
+
+            <h3>
+                <i class="bi bi-camera-fill"></i>
+                Scan Document
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <form
+                action="{{ url_for('upload.upload_camera') }}"
+                method="POST"
+                enctype="multipart/form-data">
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Capture Document
+
+                    </label>
+
+                    <input
+                        type="file"
+                        name="document"
+                        accept="image/*"
+                        capture="environment"
+                        class="form-control"
+                        required>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100">
+
+                    <i class="bi bi-cloud-upload-fill"></i>
+
+                    Capture & Upload
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
